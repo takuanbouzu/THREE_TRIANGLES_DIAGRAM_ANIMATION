@@ -1,482 +1,151 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Three Lost Triangles — Diagram Animation</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background: #0a0a0f;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 40px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 20px;
-        }
-
-        h1 {
-            font-size: 32px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #fff;
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: #888;
-            letter-spacing: 1px;
-        }
-
-        /* Timeline Scrubber */
-        .timeline-section {
-            background: #0f0f1a;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 30px;
-            margin-bottom: 40px;
-        }
-
-        .timeline-label {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #888;
-            margin-bottom: 15px;
-        }
-
-        .timeline-container {
-            position: relative;
-            height: 60px;
-            background: linear-gradient(90deg, rgba(111,155,196,0.1) 0%, rgba(219,104,77,0.1) 100%);
-            border-radius: 4px;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .timeline-progress {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            background: linear-gradient(90deg, #6f9bc4 0%, #db684d 100%);
-            width: 0%;
-            transition: width 0.05s linear;
-        }
-
-        .timeline-chapters {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 100%;
-            display: flex;
-        }
-
-        .chapter {
-            flex: 1;
-            border-right: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.4);
-            text-align: center;
-        }
-
-        .chapter:last-child { border-right: none; }
-
-        .timeline-time {
-            font-weight: 600;
-            color: #aaa;
-            margin-top: 12px;
-            font-size: 16px;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-            align-items: center;
-        }
-
-        button {
-            background: #6f9bc4;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        button:hover { background: #7faed9; }
-        button:active { background: #5d87b2; }
-
-        /* Diagram Grid */
-        .diagram-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px;
-            margin-bottom: 60px;
-        }
-
-        .diagram-card {
-            background: #0f0f1a;
-            border: 1px solid #333;
-            border-radius: 6px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .diagram-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 10px;
-        }
-
-        .diagram-canvas {
-            width: 100%;
-            aspect-ratio: 1;
-            background: linear-gradient(135deg, #1a1a2e 0%, #0f0f1a 100%);
-            border: 1px solid #333;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-grow: 1;
-        }
-
-        svg {
-            width: 90%;
-            height: 90%;
-        }
-
-        .diagram-info {
-            font-size: 11px;
-            color: #888;
-            line-height: 1.6;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-
-        .info-label {
-            color: #6f9bc4;
-            font-weight: 600;
-        }
-
-        .info-value {
-            color: #db684d;
-        }
-
-        .diagram-active {
-            border-color: #db684d;
-            box-shadow: 0 0 15px rgba(219, 104, 77, 0.3);
-        }
-
-        .footer {
-            text-align: center;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #333;
-            color: #666;
-            font-size: 11px;
-        }
-
-        .progress-indicator {
-            font-size: 12px;
-            color: #aaa;
-            text-align: center;
-            margin-top: 8px;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Lost Triangle — Operations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#100e0b;}</style>
+<script src="./vendor/react.production.min.js"></script>
+<script src="./vendor/react-dom.production.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Three Lost Triangles</h1>
-            <p class="subtitle">Diagram Animation — Three Geometric Orientations of 1:√2:√3</p>
-        </div>
+<div id="root"></div>
+<script>
+// ---------------------------------------------------------------------------
+// Standalone runtime shim.
+// This component was authored as an Anthropic "Domino" (.dc.html) artifact that
+// relied on an external support.js harness (DCLogic base class + {{ }} template
+// binding). Here DCLogic is just React.Component and the original template has
+// been rewritten as a real render() method, so the piece runs in any browser.
+// ---------------------------------------------------------------------------
+var DCLogic = React.Component;
 
-        <!-- Timeline Scrubber -->
-        <div class="timeline-section">
-            <div class="timeline-label">Timeline: Watch the Three Orientations Reveal</div>
-            <div class="timeline-container" id="timeline">
-                <div class="timeline-progress" id="progress"></div>
-                <div class="timeline-chapters">
-                    <div class="chapter">45° Az</div>
-                    <div class="chapter">Transition</div>
-                    <div class="chapter">35.25° Az</div>
-                    <div class="chapter">Transition</div>
-                    <div class="chapter">54.74° Az</div>
-                    <div class="chapter">Rotation</div>
-                </div>
-            </div>
-            <div class="timeline-time" id="currentTime">00:00</div>
-            <div class="progress-indicator" id="progressText">Ready</div>
-            <div class="controls">
-                <button id="playBtn" onclick="togglePlay()">▶ Play</button>
-                <button onclick="resetTimeline()">⟲ Reset</button>
-                <button onclick="jumpTo(40)">Jump to 54.74°</button>
-            </div>
-        </div>
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.END=60; this.S=300; this.cx=960; this.cy=560; this.el=20*Math.PI/180; this.az0=-0.55; this.KEY='lt_ops';
+    this.C={ink:'#1C1A16',blue:'#6f9bc4',terra:'#db684d',gold:'#c9a24b',green:'#77a485'};
+    this.CH=[0,9,18,27,39,51]; this.CHAP=['FOLD','EXTRUDE','CLOSE','REFLECT','WYTHOFF','DOUBLE'];
+    this.O=[0,0,0]; this.E=[1,0,1]; this.V=[1,1,1];
+    this.cube=[[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
+    this.edges=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    var perms=[[0,1,2],[0,2,1],[1,0,2],[1,2,0],[2,0,1],[2,1,0]],signs=[];
+    for(var a=0;a<2;a++)for(var b=0;b<2;b++)for(var c=0;c<2;c++)signs.push([a?-1:1,b?-1:1,c?-1:1]);
+    var G=[]; perms.forEach(function(p){signs.forEach(function(s){G.push([p,s]);});});
+    var gp=function(m,p){var pe=m[0],si=m[1];return [si[0]*p[pe[0]],si[1]*p[pe[1]],si[2]*p[pe[2]]];};
+    this.TR=G.map((m)=>[gp(m,this.E),gp(m,this.V)]);
+    this.CUBO=[[1,1,0],[1,-1,0],[-1,1,0],[-1,-1,0],[1,0,1],[1,0,-1],[-1,0,1],[-1,0,-1],[0,1,1],[0,1,-1],[0,-1,1],[0,-1,-1]];
+    this.CUBOE=[]; for(var i=0;i<12;i++)for(var j=i+1;j<12;j++){var d=Math.hypot(this.CUBO[i][0]-this.CUBO[j][0],this.CUBO[i][1]-this.CUBO[j][1],this.CUBO[i][2]-this.CUBO[j][2]); if(Math.abs(d-Math.SQRT2)<1e-6)this.CUBOE.push([i,j]);}
+    var RDc=[]; for(var x=0;x<2;x++)for(var y=0;y<2;y++)for(var z=0;z<2;z++)RDc.push([x?1:-1,y?1:-1,z?1:-1]);
+    var RDax=[[2,0,0],[-2,0,0],[0,2,0],[0,-2,0],[0,0,2],[0,0,-2]];
+    this.RDV=RDc.concat(RDax); this.RDE=[];
+    var self=this; RDc.forEach(function(c,ci){for(var ax=0;ax<3;ax++){var t=[0,0,0];t[ax]=2*(c[ax]>0?1:-1);for(var k=0;k<RDax.length;k++)if(RDax[k][0]===t[0]&&RDax[k][1]===t[1]&&RDax[k][2]===t[2])self.RDE.push([ci,8+k]);}});
+    this.state={t:0,playing:false,vw:(typeof window!=='undefined'?window.innerWidth:1280)};
+  }
+  componentDidMount(){
+    var saved=parseFloat(localStorage.getItem(this.KEY));
+    if(!isNaN(saved)&&saved>0&&saved<this.END) this.setState({t:saved});
+    else if(this.props.autoplay) this.setState({playing:true});
+    this.fit(); this._fit=()=>this.fit(); window.addEventListener('resize',this._fit);
+    this._last=performance.now();
+    var loop=(now)=>{ var dt=(now-this._last)/1000; this._last=now;
+      if(this.state.playing){ var nt=this.state.t+dt; if(nt>=this.END){nt=this.END;this.setState({t:nt,playing:false});} else this.setState({t:nt});
+        if(Math.floor(nt*4)!==this._sv){this._sv=Math.floor(nt*4);localStorage.setItem(this.KEY,nt.toFixed(2));} }
+      this._raf=requestAnimationFrame(loop); };
+    this._raf=requestAnimationFrame(loop);
+  }
+  componentWillUnmount(){ cancelAnimationFrame(this._raf); window.removeEventListener('resize',this._fit); }
+  fit(){ if(this.state.vw!==window.innerWidth) this.setState({vw:window.innerWidth}); if(!this.stage) return; var s=Math.min(window.innerWidth/1920,window.innerHeight/1080); this.stage.style.transform='translate(-50%,-50%) scale('+s+')'; }
+  curCI(){ var ci=0; for(var i=0;i<this.CH.length;i++){ if(this.state.t>=this.CH[i]-0.001) ci=i; } return ci; }
+  goStage(i){ var nt=this.CH[i]; this.setState({t:nt}); localStorage.setItem(this.KEY,nt.toFixed(2)); }
+  goPrev(){ this.goStage(Math.max(0,this.curCI()-1)); }
+  goNext(){ this.goStage(Math.min(this.CH.length-1,this.curCI()+1)); }
+  sm(t,a,b){ if(b<=a) return t>=b?1:0; var e=(t-a)/(b-a); e=e<0?0:e>1?1:e; return e*e*(3-2*e); }
+  fio(t,a,b,c,d){ return this.sm(t,a,b)*(1-this.sm(t,c,d)); }
+  proj(p,sc){ sc=sc||this.S; var a=this._az,ce=Math.cos(a),se=Math.sin(a); var xa=p[0]*ce-p[1]*se,ya=p[0]*se+p[1]*ce,za=p[2]; var zb=ya*Math.sin(this.el)+za*Math.cos(this.el); return [this.cx+xa*sc,this.cy-zb*sc]; }
+  mid(a,b){ return [(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2]; }
+  seg(p0,p1,prog,color,w,sc,o){ o=o||{}; if(prog<=0) return null; var A=this.proj(p0,sc),B0=this.proj(p1,sc),B=[A[0]+(B0[0]-A[0])*prog,A[1]+(B0[1]-A[1])*prog]; return React.createElement('line',{key:'s'+(this._k++),x1:A[0],y1:A[1],x2:B[0],y2:B[1],stroke:color,strokeWidth:w,strokeLinecap:'round',strokeDasharray:o.dash,opacity:o.op==null?1:o.op}); }
+  ln(a,b,color,w,op,dash){ return React.createElement('line',{key:'L'+(this._k++),x1:a[0],y1:a[1],x2:b[0],y2:b[1],stroke:color,strokeWidth:w,strokeLinecap:'round',opacity:op==null?1:op,strokeDasharray:dash}); }
+  poly(ps,fill,op,sc){ var pts=ps.map((p)=>{var P=this.proj(p,sc);return P[0].toFixed(1)+','+P[1].toFixed(1);}).join(' '); return React.createElement('polygon',{key:'p'+(this._k++),points:pts,fill:fill,stroke:'none',opacity:op}); }
+  dot(p,rad,color,op,sc){ if(op<=0) return null; var P=this.proj(p,sc); return React.createElement('circle',{key:'c'+(this._k++),cx:P[0],cy:P[1],r:rad,fill:color,opacity:op}); }
+  labP(p,txt,color,op,o){ o=o||{}; if(op<=0) return null; var P=this.proj(p,o.sc); return React.createElement('text',{key:'l'+(this._k++),x:P[0]+(o.dx||0),y:P[1]+(o.dy||0),fill:color,opacity:op,fontSize:o.size||30,fontFamily:"'IBM Plex Mono',monospace",fontWeight:o.w||600,textAnchor:'middle'},txt); }
+  txt(x,y,s,color,op,o){ o=o||{}; if(op<=0) return null; return React.createElement('text',{key:'x'+(this._k++),x,y,fill:color,opacity:op,fontSize:o.size||34,fontFamily:o.face||"'Source Serif 4',Georgia,serif",fontStyle:o.italic?'italic':'normal',fontWeight:o.w||400,textAnchor:o.anchor||'middle',letterSpacing:o.ls||0},s); }
+  rang(O3,A3,B3,c,op){ if(op<=0) return null; var D=this.proj(O3),A=this.proj(A3),B=this.proj(B3); var v1=[A[0]-D[0],A[1]-D[1]],v2=[B[0]-D[0],B[1]-D[1]]; var n1=Math.hypot(v1[0],v1[1])||1,n2=Math.hypot(v2[0],v2[1])||1,s=18; var a=[D[0]+v1[0]/n1*s,D[1]+v1[1]/n1*s],b=[D[0]+v2[0]/n2*s,D[1]+v2[1]/n2*s],cc=[a[0]+v2[0]/n2*s,a[1]+v2[1]/n2*s]; return React.createElement('path',{key:'r'+(this._k++),d:'M '+a[0]+' '+a[1]+' L '+cc[0]+' '+cc[1]+' L '+b[0]+' '+b[1],fill:'none',stroke:c,strokeWidth:2,opacity:op}); }
 
-        <!-- Diagram Grid -->
-        <div class="diagram-grid">
-            <!-- 45° Equatorial -->
-            <div class="diagram-card" id="card-45">
-                <div class="diagram-title">45° Azimuth</div>
-                <div class="diagram-canvas">
-                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Grid -->
-                        <g opacity="0.2">
-                            <line x1="20" y1="20" x2="180" y2="20" stroke="#444" stroke-width="0.5"/>
-                            <line x1="20" y1="180" x2="180" y2="180" stroke="#444" stroke-width="0.5"/>
-                            <line x1="20" y1="20" x2="20" y2="180" stroke="#444" stroke-width="0.5"/>
-                            <line x1="180" y1="20" x2="180" y2="180" stroke="#444" stroke-width="0.5"/>
-                        </g>
+  renderVals(){
+    var t=this.state.t,C=this.C,k=[]; this._k=0; this._az=this.az0+0.12*t;
+    var push=(e)=>{ if(e) k.push(e); };
+    var O=this.O,E=this.E,V=this.V; var ci=this.curCI();
+    push(React.createElement('rect',{key:'b1',x:30,y:30,width:1860,height:1020,fill:'none',stroke:'rgba(28,26,22,0.85)',strokeWidth:2}));
+    push(React.createElement('rect',{key:'b2',x:38,y:38,width:1844,height:1004,fill:'none',stroke:'rgba(28,26,22,0.85)',strokeWidth:1}));
+    push(this.txt(64,86,'GREGG FLEISHMAN · THE LOST TRIANGLE — OPERATIONS','rgba(28,26,22,0.42)',1,{size:18,anchor:'start',face:"'IBM Plex Mono',monospace",ls:3}));
+    push(this.txt(1856,86,('0'+(ci+1)).slice(-2)+' / 06','rgba(28,26,22,0.42)',1,{size:18,anchor:'end',face:"'IBM Plex Mono',monospace",ls:3}));
+    var cubeOp=this.sm(t,0.3,2)*(1-this.sm(t,46,50)*0.7);
+    this.edges.forEach((e,i)=>{ var a=this.proj(this.cube[e[0]]),b=this.proj(this.cube[e[1]]); push(this.ln(a,b,'rgba(28,26,22,0.13)',1.2,cubeOp)); });
+    var mainOp=1-this.sm(t,27.5,29.5)*0.55;
+    var fillp=this.sm(t,18,20)*(1-this.sm(t,27.5,29.5)*0.4);
+    if(fillp>0) push(this.poly([O,E,V],'rgba(119,164,133,'+(0.18*fillp)+')',1));
+    var fd=this.sm(t,1,5); push(this.seg(O,E,fd,C.blue,4,null,{op:mainOp})); if(fd>0.6) push(this.labP(this.mid(O,E),'√2',C.blue,mainOp,{dy:34,size:34}));
+    var ri=this.sm(t,9.5,13); push(this.seg(E,V,ri,C.terra,4,null,{op:mainOp})); if(ri>0.6) push(this.labP(this.mid(E,V),'1',C.terra,mainOp,{dx:30,size:34}));
+    var hy=this.sm(t,18.5,22); push(this.seg(O,V,hy,C.ink,4.4,null,{op:mainOp})); if(hy>0.6) push(this.labP(this.mid(O,V),'√3',C.ink,mainOp,{dx:-32,size:34}));
+    push(this.rang(E,O,V,'rgba(119,164,133,.9)',fillp));
+    if(this.sm(t,21,23)>0){ var apo=this.sm(t,21,23)*mainOp; push(this.labP(O,'35.26°',C.gold,apo,{dx:54,dy:-26,size:24})); push(this.labP(V,'54.74°',C.gold,apo,{dx:-6,dy:42,size:24})); }
+    push(this.dot(O,7,C.ink,this.sm(t,0.3,2))); push(this.dot(E,6,C.blue,fd)); push(this.dot(V,7,C.ink,hy));
+    // ACT 4 reflect-tile
+    var rv=this.fio(t,27.5,29,50,51.5);
+    if(rv>0){ var N=Math.floor(48*this.sm(t,28.5,38));
+      for(var i=0;i<N&&i<48;i++){ push(this.poly([O,this.TR[i][0],this.TR[i][1]],'rgba(119,164,133,0.07)',rv));
+        push(this.ln(this.proj(O),this.proj(this.TR[i][0]),'rgba(111,155,196,0.5)',1.2,rv*0.7));
+        push(this.ln(this.proj(this.TR[i][0]),this.proj(this.TR[i][1]),'rgba(219,104,77,0.5)',1.2,rv*0.7)); }
+      push(this.txt(960,966,'σ — reflect across its legs → '+Math.min(N,48)+' / 48 copies tile the cube (Oₕ)',C.terra,1,{size:30,face:"'IBM Plex Mono',monospace"})); }
+    // ACT 5 Wythoff
+    var wv=this.fio(t,39,40.5,51,52);
+    if(wv>0){ var seed=this.sm(t,39.5,40.8); push(this.dot(E,12*seed,C.gold,wv));
+      var cloud=this.sm(t,40.5,43); this.CUBO.forEach((p)=>push(this.dot(p,6,C.gold,wv*cloud)));
+      var ce2=this.sm(t,43,46); this.CUBOE.forEach((e)=>push(this.seg(this.CUBO[e[0]],this.CUBO[e[1]],ce2,C.gold,2.4,null,{op:wv})));
+      var rd=this.sm(t,46.5,50); this.RDE.forEach((e)=>push(this.seg(this.RDV[e[0]],this.RDV[e[1]],rd,C.terra,2.8,this.S*0.62,{op:wv})));
+      this.RDV.forEach((p)=>push(this.dot(p,4.5,C.terra,wv*rd,this.S*0.62)));
+      var lab=ce2<0.99?'Wythoff seed at E → its 48-orbit is the cuboctahedron (12 vertices)':'dual of the cuboctahedron → the rhombic dodecahedron';
+      push(this.txt(960,966,lab,ce2<0.99?C.gold:C.terra,1,{size:30,face:"'IBM Plex Mono',monospace"})); }
+    // ACT 6 double
+    var dv=this.fio(t,51.5,53,60,61);
+    if(dv>0){ var p=150,q=150*Math.tan(35.264*Math.PI/180),C0=960,C1=560;
+      push(React.createElement('polygon',{key:'rh',points:C0+','+(C1-p)+' '+(C0+q)+','+C1+' '+C0+','+(C1+p)+' '+(C0-q)+','+C1,fill:'rgba(119,164,133,0.14)',stroke:C.green,strokeWidth:3,opacity:dv}));
+      push(this.txt(C0,C1-p-16,'70.53°',C.gold,1,{size:26,face:"'IBM Plex Mono',monospace"})); push(this.txt(C0,C1+p+34,'70.53°',C.gold,1,{size:26,face:"'IBM Plex Mono',monospace"}));
+      push(this.txt(C0-q-14,C1+8,'109.47°',C.gold,1,{size:24,anchor:'end',face:"'IBM Plex Mono',monospace"})); push(this.txt(C0+q+14,C1+8,'109.47°',C.gold,1,{size:24,anchor:'start',face:"'IBM Plex Mono',monospace"}));
+      push(this.txt(960,966,'2α = 70.53°   ·   2β = 109.47°   —   the rhombic-dodecahedron face that fills space',C.terra,1,{size:28,face:"'IBM Plex Mono',monospace"})); }
+    push(this.txt(64,170,(ci+1)+'.  '+this.CHAP[ci],C.ink,this.sm(t,this.CH[ci],this.CH[ci]+0.6),{size:58,anchor:'start',w:800,face:"'Archivo',sans-serif",ls:-1.5}));
+    push(React.createElement('rect',{key:'pt',x:64,y:1016,width:1792,height:2,fill:'rgba(28,26,22,0.14)'}));
+    push(React.createElement('rect',{key:'pf',x:64,y:1016,width:1792*Math.min(1,t/this.END),height:2,fill:'#1C1A16'}));
+    var scene=React.createElement('svg',{viewBox:'0 0 1920 1080',width:'100%',height:'100%',role:'img',style:{position:'absolute',inset:0,display:'block'}},k);
+    var dots=this.CH.map((_,i)=>({bg:i===ci?'#c9a24b':'rgba(229,224,212,.24)',tf:i===ci?'scale(1.4)':'scale(1)',title:this.CHAP[i],onClick:()=>this.goStage(i)}));
+    return { scene, stageRef:(el)=>{this.stage=el;if(el)this.fit();}, playIcon:this.state.playing?'❚❚':'▶', toggle:()=>{ if(this.state.t>=this.END) this.setState({t:0,playing:true}); else this.setState(s=>({playing:!s.playing})); }, goPrev:()=>this.goPrev(), goNext:()=>this.goNext(), dots, counterLabel:('0'+(ci+1)).slice(-2)+' / 06', navScale:this.state.vw<420?0.82:(this.state.vw<640?0.9:1) };
+  }
 
-                        <!-- Triangle 45° (symmetric) -->
-                        <polygon points="100,50 150,150 50,150" fill="none" stroke="#77a485" stroke-width="2"/>
-                        <line x1="100" y1="50" x2="150" y2="150" stroke="#db684d" stroke-width="2"/>
-                        <line x1="150" y1="150" x2="50" y2="150" stroke="#6f9bc4" stroke-width="2"/>
-                        <line x1="50" y1="150" x2="100" y2="50" stroke="#c9a24b" stroke-width="2" stroke-dasharray="3,3"/>
+  // The original Domino template, rewritten as a real React render().
+  render(){
+    var v=this.renderVals(), h=React.createElement;
+    var navBtn={width:'40px',height:'40px',background:'none',border:'none',color:'rgba(229,224,212,.5)',fontSize:'18px',cursor:'pointer'};
+    return h('div',{style:{position:'fixed',inset:0,background:'radial-gradient(120% 120% at 50% 0%,#1d1a14 0%,#100e0b 100%)',overflow:'hidden'}},
+      h('div',{ref:v.stageRef,style:{position:'absolute',left:'50%',top:'50%',width:'1920px',height:'1080px',transform:'translate(-50%,-50%)',transformOrigin:'center center',background:'#F6F4EE',boxShadow:'0 40px 120px rgba(0,0,0,0.55)'}},v.scene),
+      h('div',{style:{position:'fixed',bottom:'max(16px, env(safe-area-inset-bottom))',left:'50%',transform:'translateX(-50%) scale('+v.navScale+')',transformOrigin:'bottom center',display:'flex',alignItems:'center',gap:'6px',padding:'4px 8px',background:'rgba(8,12,20,.82)',backdropFilter:'blur(14px)',WebkitBackdropFilter:'blur(14px)',border:'1px solid rgba(255,255,255,.12)',boxShadow:'0 10px 34px rgba(0,0,0,.55)',fontFamily:"'IBM Plex Mono',monospace",maxWidth:'96vw'}},
+        h('button',{onClick:v.toggle,'aria-label':'Play / pause',style:{width:'40px',height:'40px',background:'none',border:'none',color:'rgba(229,224,212,.7)',fontSize:'13px',cursor:'pointer'}},v.playIcon),
+        h('span',{style:{width:'1px',height:'18px',background:'rgba(255,255,255,.12)'}}),
+        h('button',{onClick:v.goPrev,'aria-label':'Previous',style:navBtn},'←'),
+        h('div',{style:{display:'flex',gap:'2px',alignItems:'center'}},
+          v.dots.map((d,i)=>h('div',{key:i,onClick:d.onClick,title:d.title,style:{display:'flex',alignItems:'center',justifyContent:'center',width:'26px',height:'40px',cursor:'pointer'}},
+            h('div',{style:{width:'8px',height:'8px',borderRadius:'50%',transition:'transform .18s,background .18s',background:d.bg,transform:d.tf}})))),
+        h('span',{style:{fontSize:'11px',color:'rgba(229,224,212,.5)',letterSpacing:'.1em',minWidth:'50px',textAlign:'center'}},v.counterLabel),
+        h('button',{onClick:v.goNext,'aria-label':'Next',style:navBtn},'→')
+      )
+    );
+  }
+}
 
-                        <!-- Vertices -->
-                        <circle cx="100" cy="50" r="4" fill="#db684d"/>
-                        <circle cx="150" cy="150" r="4" fill="#6f9bc4"/>
-                        <circle cx="50" cy="150" r="4" fill="#77a485"/>
-
-                        <!-- Labels -->
-                        <text x="100" y="35" text-anchor="middle" font-size="12" fill="#db684d" font-weight="600">T</text>
-                        <text x="165" y="160" text-anchor="middle" font-size="12" fill="#6f9bc4" font-weight="600">U</text>
-                        <text x="35" y="160" text-anchor="middle" font-size="12" fill="#77a485" font-weight="600">O</text>
-                        <text x="125" y="105" font-size="10" fill="#c9a24b">√3</text>
-                        <text x="145" y="135" font-size="10" fill="#6f9bc4">1</text>
-                        <text x="75" y="140" font-size="10" fill="#db684d">√2</text>
-                    </svg>
-                </div>
-                <div class="diagram-info">
-                    <div class="info-row">
-                        <span class="info-label">Azimuth:</span>
-                        <span class="info-value">45°</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Type:</span>
-                        <span class="info-value">Equatorial / Symmetric</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Ratio:</span>
-                        <span class="info-value">1 : √2 : √3</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 35.25° Cube-Native -->
-            <div class="diagram-card" id="card-35">
-                <div class="diagram-title">35.25° Azimuth</div>
-                <div class="diagram-canvas">
-                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Grid -->
-                        <g opacity="0.2">
-                            <line x1="30" y1="30" x2="170" y2="30" stroke="#444" stroke-width="0.5"/>
-                            <line x1="30" y1="170" x2="170" y2="170" stroke="#444" stroke-width="0.5"/>
-                            <line x1="30" y1="30" x2="30" y2="170" stroke="#444" stroke-width="0.5"/>
-                            <line x1="170" y1="30" x2="170" y2="170" stroke="#444" stroke-width="0.5"/>
-                        </g>
-
-                        <!-- Triangle 35.25° (skewed to cube-native) -->
-                        <polygon points="50,80 140,160 40,160" fill="none" stroke="#77a485" stroke-width="2"/>
-                        <line x1="50" y1="80" x2="140" y2="160" stroke="#c9a24b" stroke-width="2" stroke-dasharray="3,3"/>
-                        <line x1="140" y1="160" x2="40" y2="160" stroke="#6f9bc4" stroke-width="2"/>
-                        <line x1="40" y1="160" x2="50" y2="80" stroke="#db684d" stroke-width="2"/>
-
-                        <!-- Vertices -->
-                        <circle cx="50" cy="80" r="4" fill="#db684d"/>
-                        <circle cx="140" cy="160" r="4" fill="#6f9bc4"/>
-                        <circle cx="40" cy="160" r="4" fill="#77a485"/>
-
-                        <!-- Labels -->
-                        <text x="50" y="65" text-anchor="middle" font-size="12" fill="#db684d" font-weight="600">T</text>
-                        <text x="155" y="170" text-anchor="middle" font-size="12" fill="#6f9bc4" font-weight="600">U</text>
-                        <text x="25" y="170" text-anchor="middle" font-size="12" fill="#77a485" font-weight="600">O</text>
-                        <text x="75" y="110" font-size="10" fill="#c9a24b">2√3</text>
-                        <text x="145" y="145" font-size="10" fill="#6f9bc4">1</text>
-                        <text x="50" y="155" font-size="10" fill="#db684d">√2</text>
-                    </svg>
-                </div>
-                <div class="diagram-info">
-                    <div class="info-row">
-                        <span class="info-label">Azimuth:</span>
-                        <span class="info-value">35.25°</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Type:</span>
-                        <span class="info-value">Cube-Native / arctan(1/√2)</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Ratio:</span>
-                        <span class="info-value">1 : √2 : √3</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 54.74° Tetrahedral -->
-            <div class="diagram-card" id="card-54">
-                <div class="diagram-title">54.74° Azimuth</div>
-                <div class="diagram-canvas">
-                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Grid -->
-                        <g opacity="0.2">
-                            <line x1="40" y1="40" x2="160" y2="40" stroke="#444" stroke-width="0.5"/>
-                            <line x1="40" y1="160" x2="160" y2="160" stroke="#444" stroke-width="0.5"/>
-                            <line x1="40" y1="40" x2="40" y2="160" stroke="#444" stroke-width="0.5"/>
-                            <line x1="160" y1="40" x2="160" y2="160" stroke="#444" stroke-width="0.5"/>
-                        </g>
-
-                        <!-- Triangle 54.74° (tetrahedral) -->
-                        <polygon points="100,45 155,155 45,155" fill="none" stroke="#77a485" stroke-width="2"/>
-                        <line x1="100" y1="45" x2="155" y2="155" stroke="#c9a24b" stroke-width="2" stroke-dasharray="3,3"/>
-                        <line x1="155" y1="155" x2="45" y2="155" stroke="#db684d" stroke-width="2"/>
-                        <line x1="45" y1="155" x2="100" y2="45" stroke="#6f9bc4" stroke-width="2"/>
-
-                        <!-- Vertices -->
-                        <circle cx="100" cy="45" r="4" fill="#6f9bc4"/>
-                        <circle cx="155" cy="155" r="4" fill="#db684d"/>
-                        <circle cx="45" cy="155" r="4" fill="#77a485"/>
-
-                        <!-- Labels -->
-                        <text x="100" y="30" text-anchor="middle" font-size="12" fill="#6f9bc4" font-weight="600">T</text>
-                        <text x="170" y="165" text-anchor="middle" font-size="12" fill="#db684d" font-weight="600">U</text>
-                        <text x="30" y="165" text-anchor="middle" font-size="12" fill="#77a485" font-weight="600">O</text>
-                        <text x="120" y="90" font-size="10" fill="#c9a24b">2√3</text>
-                        <text x="160" y="140" font-size="10" fill="#db684d">√2</text>
-                        <text x="60" y="145" font-size="10" fill="#6f9bc4">1</text>
-                    </svg>
-                </div>
-                <div class="diagram-info">
-                    <div class="info-row">
-                        <span class="info-label">Azimuth:</span>
-                        <span class="info-value">54.74°</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Type:</span>
-                        <span class="info-value">Tetrahedral / arctan(√2)</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Ratio:</span>
-                        <span class="info-value">1 : √2 : √3</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            Three Lost Triangles — Diagram Animation • 2026-06-25
-        </div>
-    </div>
-
-    <script>
-        let currentTime = 0;
-        let isPlaying = false;
-        const duration = 60; // 60 seconds total
-
-        function updateTimeline(time) {
-            currentTime = Math.min(time, duration);
-
-            // Update progress bar
-            const progress = (currentTime / duration) * 100;
-            document.getElementById('progress').style.width = progress + '%';
-
-            // Update time display
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = Math.floor(currentTime % 60);
-            document.getElementById('currentTime').textContent =
-                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-
-            // Update diagram highlights based on timeline
-            document.getElementById('card-45').classList.remove('diagram-active');
-            document.getElementById('card-35').classList.remove('diagram-active');
-            document.getElementById('card-54').classList.remove('diagram-active');
-
-            if (currentTime < 20) {
-                document.getElementById('card-45').classList.add('diagram-active');
-                document.getElementById('progressText').textContent = '45° Equatorial — Symmetric View';
-            } else if (currentTime < 40) {
-                document.getElementById('card-35').classList.add('diagram-active');
-                document.getElementById('progressText').textContent = '35.25° Cube-Native — arctan(1/√2)';
-            } else {
-                document.getElementById('card-54').classList.add('diagram-active');
-                document.getElementById('progressText').textContent = '54.74° Tetrahedral — arctan(√2)';
-            }
-        }
-
-        function togglePlay() {
-            isPlaying = !isPlaying;
-            document.getElementById('playBtn').textContent = isPlaying ? '⏸ Pause' : '▶ Play';
-            if (isPlaying) animate();
-        }
-
-        function animate() {
-            if (!isPlaying) return;
-            currentTime += 0.016; // ~60fps
-            if (currentTime > duration) {
-                isPlaying = false;
-                document.getElementById('playBtn').textContent = '▶ Play';
-                currentTime = duration;
-            }
-            updateTimeline(currentTime);
-            if (isPlaying) requestAnimationFrame(animate);
-        }
-
-        function resetTimeline() {
-            isPlaying = false;
-            currentTime = 0;
-            document.getElementById('playBtn').textContent = '▶ Play';
-            updateTimeline(0);
-        }
-
-        function jumpTo(time) {
-            currentTime = time;
-            updateTimeline(currentTime);
-        }
-
-        // Timeline click to seek
-        document.getElementById('timeline').addEventListener('click', (e) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const percent = (e.clientX - rect.left) / rect.width;
-            jumpTo(percent * duration);
-        });
-
-        // Initialize
-        updateTimeline(0);
-    </script>
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Component,{autoplay:true}));
+</script>
 </body>
 </html>
