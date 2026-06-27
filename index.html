@@ -95,12 +95,12 @@ class Component extends DCLogic {
     if(this.sm(t,21,23)>0){ var apo=this.sm(t,21,23)*mainOp; push(this.labP(O,'35.26°',C.gold,apo,{dx:54,dy:-26,size:24})); push(this.labP(V,'54.74°',C.gold,apo,{dx:-6,dy:42,size:24})); }
     push(this.dot(O,7,C.ink,this.sm(t,0.3,2))); push(this.dot(E,6,C.blue,fd)); push(this.dot(V,7,C.ink,hy));
     // ACT 4 reflect-tile
-    var rv=this.fio(t,27.5,29,50,51.5);
+    var rv=this.fio(t,27.5,29,50,51.5); var _statusTxt=null, _statusColor=C.terra;
     if(rv>0){ var N=Math.floor(48*this.sm(t,28.5,38));
       for(var i=0;i<N&&i<48;i++){ push(this.poly([O,this.TR[i][0],this.TR[i][1]],'rgba(119,164,133,0.07)',rv));
         push(this.ln(this.proj(O),this.proj(this.TR[i][0]),'rgba(111,155,196,0.5)',1.2,rv*0.7));
         push(this.ln(this.proj(this.TR[i][0]),this.proj(this.TR[i][1]),'rgba(219,104,77,0.5)',1.2,rv*0.7)); }
-      push(this.txt(960,966,'σ — reflect across its legs → '+Math.min(N,48)+' / 48 copies tile the cube (Oₕ)',C.terra,1,{size:30,face:"'IBM Plex Mono',monospace"})); }
+      _statusTxt='σ — reflect across its legs → '+Math.min(N,48)+' / 48 copies tile the cube (Oₕ)'; _statusColor=C.terra; }
     // ACT 5 Wythoff
     var wv=this.fio(t,39,40.5,51,52);
     if(wv>0){ var seed=this.sm(t,39.5,40.8); push(this.dot(E,12*seed,C.gold,wv));
@@ -109,15 +109,17 @@ class Component extends DCLogic {
       var rd=this.sm(t,46.5,50); this.RDE.forEach((e)=>push(this.seg(this.RDV[e[0]],this.RDV[e[1]],rd,C.terra,2.8,this.S*0.62,{op:wv})));
       this.RDV.forEach((p)=>push(this.dot(p,4.5,C.terra,wv*rd,this.S*0.62)));
       var lab=ce2<0.99?'Wythoff seed at E → its 48-orbit is the cuboctahedron (12 vertices)':'dual of the cuboctahedron → the rhombic dodecahedron';
-      push(this.txt(960,966,lab,ce2<0.99?C.gold:C.terra,1,{size:30,face:"'IBM Plex Mono',monospace"})); }
+      _statusTxt=lab; _statusColor=ce2<0.99?C.gold:C.terra; }
     // ACT 6 double
     var dv=this.fio(t,51.5,53,60,61);
     if(dv>0){ var p=150,q=150*Math.tan(35.264*Math.PI/180),C0=960,C1=560;
       push(React.createElement('polygon',{key:'rh',points:C0+','+(C1-p)+' '+(C0+q)+','+C1+' '+C0+','+(C1+p)+' '+(C0-q)+','+C1,fill:'rgba(119,164,133,0.14)',stroke:C.green,strokeWidth:3,opacity:dv}));
       push(this.txt(C0,C1-p-16,'70.53°',C.gold,1,{size:26,face:"'IBM Plex Mono',monospace"})); push(this.txt(C0,C1+p+34,'70.53°',C.gold,1,{size:26,face:"'IBM Plex Mono',monospace"}));
       push(this.txt(C0-q-14,C1+8,'109.47°',C.gold,1,{size:24,anchor:'end',face:"'IBM Plex Mono',monospace"})); push(this.txt(C0+q+14,C1+8,'109.47°',C.gold,1,{size:24,anchor:'start',face:"'IBM Plex Mono',monospace"}));
-      push(this.txt(960,966,'2α = 70.53°   ·   2β = 109.47°   —   the rhombic-dodecahedron face that fills space',C.terra,1,{size:28,face:"'IBM Plex Mono',monospace"})); }
+      _statusTxt='2α = 70.53°   ·   2β = 109.47°   —   the rhombic-dodecahedron face that fills space'; _statusColor=C.terra; }
     push(this.txt(64,170,(ci+1)+'.  '+this.CHAP[ci],C.ink,this.sm(t,this.CH[ci],this.CH[ci]+0.6),{size:58,anchor:'start',w:800,face:"'Archivo',sans-serif",ls:-1.5}));
+    // Status text rendered last (on top of all geometry) with background mask
+    if(_statusTxt){ push(React.createElement('rect',{key:'stbg',x:64,y:930,width:1792,height:70,fill:'rgba(246,244,238,0.92)'})); push(this.txt(960,975,_statusTxt,_statusColor,1,{size:30,face:"'IBM Plex Mono',monospace"})); }
     push(React.createElement('rect',{key:'pt',x:64,y:1016,width:1792,height:2,fill:'rgba(28,26,22,0.14)'}));
     push(React.createElement('rect',{key:'pf',x:64,y:1016,width:1792*Math.min(1,t/this.END),height:2,fill:'#1C1A16'}));
     var scene=React.createElement('svg',{viewBox:'0 0 1920 1080',width:'100%',height:'100%',role:'img',style:{position:'absolute',inset:0,display:'block'}},k);
